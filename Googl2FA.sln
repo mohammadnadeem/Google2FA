@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Googl2FA", "Googl2FA\Googl2FA.csproj", "{795FB610-09B3-4C61-860F-C569C6A0499F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{795FB610-09B3-4C61-860F-C569C6A0499F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{795FB610-09B3-4C61-860F-C569C6A0499F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{795FB610-09B3-4C61-860F-C569C6A0499F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{795FB610-09B3-4C61-860F-C569C6A0499F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B48E7371-FF25-4D2B-84E1-3664BD24D61E}
+	EndGlobalSection
+EndGlobal
