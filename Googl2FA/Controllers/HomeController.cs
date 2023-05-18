@@ -1,5 +1,6 @@
 ﻿using Googl2FA.Config;
 using Googl2FA.Models;
+using Googl2FA.Repository;
 using Google.Authenticator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -12,11 +13,13 @@ namespace Googl2FA.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Google2FAConfig _google2FAConfig;
+        private readonly IUserRepository _userRepository;
 
-        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options)
+        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options, IUserRepository userRepository)
         {
             _logger = logger;
             _google2FAConfig = options.Value;
+            _userRepository = userRepository;
         }
 
         public IActionResult Index()
@@ -52,9 +55,8 @@ namespace Googl2FA.Controllers
                 || !Convert.ToBoolean(HttpContext.Session.GetString("IsValidTwoFactorAuthentication")))
             {                
                 string UserUniqueKey = login.Username + _google2FAConfig.AuthKey;
-
-                //Take UserName And Password As Static - Admin As User And 12345 As Password
-                if (login.Username == "Admin" && login.Password == "12345")
+                                
+                if (_userRepository.IsValidUser(login.Username, login.Password))
                 {
                     HttpContext.Session.SetString("Username", login.Username);
 
@@ -66,9 +68,13 @@ namespace Googl2FA.Controllers
                     ViewBag.SetupCode = setupInfo.ManualEntryKey;
                     status = true;
                 }
+                else
+                {
+                    HttpContext.Session.SetString("InvalidCodeErrorMessage", "Invalid Credentials!!!!");
+                }
             }
             else
-            {
+            {                
                 return RedirectToAction("Index");
             }
             ViewBag.Status = status;
