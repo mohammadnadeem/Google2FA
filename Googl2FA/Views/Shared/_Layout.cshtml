@@ -22,9 +22,6 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
                     </ul>
 
                     @if (Context.Session.GetString("Username") != null || Context.Session.GetString("IsValidTwoFactorAuthentication") != null)
@@ -34,8 +31,7 @@
                         if (result == true)
                        {
                             <ul class="nav navbar-nav navbar-right">
-                                <li style="color: 
-    White; font-size: 15px; margin-top: 10px; margin-right: 100px;">
+                                <li style="color: White; font-size: 15px; margin-top: 10px; margin-right: 100px;">
                                     USER: HttpContext.Session.GetString("Username")
                                 </li>
                                 <li>
