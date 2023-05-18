@@ -26,7 +26,7 @@
     else
     {
 
-        <div>@ViewBag.Message</div>
+        <div>@Context.Session.GetString("InvalidCodeErrorMessage");</div>
         <div>
             <img src="@ViewBag.BarcodeImageUrl" width="300" height="300" />
 

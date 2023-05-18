@@ -1,3 +1,7 @@
+using Googl2FA.Config;
+using NuGet.Configuration;
+using System.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +13,11 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
+
+// Add our Config object so it can be injected
+builder.Services.AddOptions();
+builder.Services.Configure<Google2FAConfig>(
+    builder.Configuration.GetSection("Google2FAConfig"));
 
 var app = builder.Build();
 

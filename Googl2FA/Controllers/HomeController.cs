@@ -1,6 +1,8 @@
-﻿using Googl2FA.Models;
+﻿using Googl2FA.Config;
+using Googl2FA.Models;
 using Google.Authenticator;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Text;
 
@@ -9,10 +11,12 @@ namespace Googl2FA.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly Google2FAConfig _google2FAConfig;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options)
         {
             _logger = logger;
+            _google2FAConfig = options.Value;
         }
 
         public IActionResult Index()
@@ -38,8 +42,9 @@ namespace Googl2FA.Controllers
 
         public ActionResult Login()
         {
-            //Session["UserName"] = null;
-            //Session["IsValidTwoFactorAuthentication"] = null;
+            HttpContext.Session.SetString("UserName", "");
+            HttpContext.Session.SetString("IsValidTwoFactorAuthentication", "false");
+
             return View();
         }
 
@@ -50,9 +55,8 @@ namespace Googl2FA.Controllers
 
             if (HttpContext.Session.GetString("Username") == null || HttpContext.Session.GetString("IsValidTwoFactorAuthentication") == null 
                 || !Convert.ToBoolean(HttpContext.Session.GetString("IsValidTwoFactorAuthentication")))
-            {
-                string googleAuthKey = "somerandomkey";
-                string UserUniqueKey = (login.Username + googleAuthKey);
+            {                
+                string UserUniqueKey = login.Username + _google2FAConfig.AuthKey;
 
                 //Take UserName And Password As Static - Admin As User And 12345 As Password
                 if (login.Username == "Admin" && login.Password == "12345")
@@ -61,7 +65,7 @@ namespace Googl2FA.Controllers
 
                     //Two Factor Authentication Setup
                     TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
-                    var setupInfo = TwoFacAuth.GenerateSetupCode("nadeem.1359@gmail.com", login.Username, ConvertSecretToBytes(UserUniqueKey, false), 300);
+                    var setupInfo = TwoFacAuth.GenerateSetupCode(_google2FAConfig.Issuer, login.Username, ConvertSecretToBytes(UserUniqueKey, false), 300);
                     HttpContext.Session.SetString("UserUniqueKey", UserUniqueKey);
                     ViewBag.BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
                     ViewBag.SetupCode = setupInfo.ManualEntryKey;
@@ -88,15 +92,11 @@ namespace Googl2FA.Controllers
             bool isValid = TwoFacAuth.ValidateTwoFactorPIN(UserUniqueKey, token, false);
             if (isValid)
             {
-                //HttpCookie TwoFCookie = new HttpCookie("TwoFCookie");
-                //string UserCode = Convert.ToBase64String(MachineKey.Protect(Encoding.UTF8.GetBytes(UserUniqueKey)));
-
                 HttpContext.Session.SetString("IsValidTwoFactorAuthentication", "true");
                 HttpContext.Session.SetString("InvalidCodeErrorMessage", "");
                 return RedirectToAction("Index");
             }
-            HttpContext.Session.SetString("InvalidCodeErrorMessage", "Google Two Factor PIN is expired or wrong");
-            ViewBag.Message = "Google Two Factor PIN is expired or wrong";
+            HttpContext.Session.SetString("InvalidCodeErrorMessage", "Google Two Factor PIN is expired or wrong");            
             return RedirectToAction("Login");
         }
 
