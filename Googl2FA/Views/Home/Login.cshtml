@@ -7,7 +7,7 @@
     <h2>Login Page</h2>
     @if (ViewBag.Status == null || !ViewBag.Status)
     {
-        <div>@Context.Session.GetString("InvalidCodeErrorMessage");</div>
+        <div style="color: red">@Context.Session.GetString("InvalidCodeErrorMessage")</div>
         <div>
             @using (Html.BeginForm())
             {
@@ -24,11 +24,10 @@
         </div>
     }
     else
-    {
-        <div>@Context.Session.GetString("InvalidCodeErrorMessage");</div>
+    {        
         <div>
             <img src="@ViewBag.BarcodeImageUrl" width="300" height="300" />
-
+            5
         </div>
         <div>
             Manual Setup Code : @ViewBag.SetupCode
