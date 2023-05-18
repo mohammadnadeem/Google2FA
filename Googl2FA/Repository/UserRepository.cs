@@ -1,4 +1,5 @@
 ﻿using NuGet.Protocol.Plugins;
+using System;
 
 namespace Googl2FA.Repository
 {
@@ -6,14 +7,35 @@ namespace Googl2FA.Repository
     {
         public UserRepository()
         {
+            using (var context = new Google2FAContext())
+            {
+                var users = new List<User>()
+                {
+                    new User
+                    {
+                        Username = "Admin",
+                        Password = "12345"
+                    },
+                    new User
+                    {
+                        Username = "Shahzeb",
+                        Password = "12345"
+                    }
+                };
 
+                context.Users.AddRange(users);
+                context.SaveChanges();
+            }
         }
+
         public bool IsValidUser(string username, string password)
         {
-            if (username == "Admin" && password == "12345")
-                return true;
+            using (var context = new Google2FAContext())
+            {
+                var users = context.Users.ToList();
 
-            return false;
+                return users.Any(user => user.Username.Equals(username) && user.Password.Equals(password));
+            }
         }
     }
 }
