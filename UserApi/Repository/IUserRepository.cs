@@ -1,7 +1,9 @@
-﻿namespace UserApi.Repository
+﻿using UserApi.Models;
+
+namespace UserApi.Repository
 {
     public interface IUserRepository
     {
-        public bool IsValidUser(string username, string password);
+        public User GetUser(string username, string password);
     }
 }

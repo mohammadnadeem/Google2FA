@@ -1,10 +1,7 @@
-﻿using Googl2FA.Config;
-using Googl2FA.Models;
+﻿using Googl2FA.Models;
 using Googl2FA.Repository;
 using Google.Authenticator;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Text;
 
@@ -13,13 +10,11 @@ namespace Googl2FA.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly Google2FAConfig _google2FAConfig;
         private readonly IUserApiService _userApiClient;
 
-        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options, IUserApiService userApiClient)
+        public HomeController(ILogger<HomeController> logger, IUserApiService userApiClient)
         {
             _logger = logger;
-            _google2FAConfig = options.Value;
             _userApiClient = userApiClient;
         }
 
@@ -55,20 +50,14 @@ namespace Googl2FA.Controllers
             if (HttpContext.Session.GetString("Username") == null || HttpContext.Session.GetString("IsValidTwoFactorAuthentication") == null 
                 || !Convert.ToBoolean(HttpContext.Session.GetString("IsValidTwoFactorAuthentication")))
             {                
-                string UserUniqueKey = login.Username + _google2FAConfig.AuthKey;
-
                 var result = _userApiClient.AuthenticateUserAsync(login.Username, login.Password, "").Result;
 
                 if (result.Success)
                 {
                     HttpContext.Session.SetString("Username", login.Username);
-
-                    //Two Factor Authentication Setup
-                    TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
-                    var setupInfo = TwoFacAuth.GenerateSetupCode(_google2FAConfig.Issuer, login.Username, ConvertSecretToBytes(UserUniqueKey, false), 300);
-                    HttpContext.Session.SetString("UserUniqueKey", UserUniqueKey);
-                    ViewBag.BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl;
-                    ViewBag.SetupCode = setupInfo.ManualEntryKey;
+                    HttpContext.Session.SetString("UserUniqueKey", result.UserUniqueKey);
+                    ViewBag.BarcodeImageUrl = result.QrCodeSetupImageUrl;
+                    ViewBag.SetupCode = result.ManualEntryKey;
                     status = true;
                 }
                 else
@@ -84,8 +73,7 @@ namespace Googl2FA.Controllers
             return View();
         }
 
-        private static byte[] ConvertSecretToBytes(string secret, bool secretIsBase32) =>
-           secretIsBase32 ? Base32Encoding.ToBytes(secret) : Encoding.UTF8.GetBytes(secret);
+
 
         public ActionResult TwoFactorAuthenticate(string CodeDigit)
         {

@@ -1,4 +1,4 @@
-﻿namespace Googl2FA.Config
+﻿namespace UserApi.Config
 {
     public class Google2FAConfig
     {

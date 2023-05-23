@@ -1,4 +1,3 @@
-using Googl2FA.Config;
 using Googl2FA.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +14,6 @@ builder.Services.AddSession(options =>
 
 // Add our Config object so it can be injected
 builder.Services.AddOptions();
-builder.Services.Configure<Google2FAConfig>(
-    builder.Configuration.GetSection("Google2FAConfig"));
 
 builder.Services.AddScoped<IUserApiService, UserApiService>();
 
