@@ -28,7 +28,7 @@ namespace UserApi.Repository
                     Username = "Shahzeb",
                     Password = "12345",
                     SecretKey = "5Z0gsOxftKeCz2f",
-                    TwoFAStatus = true
+                    TwoFAStatus = false
                 }
             );
         }

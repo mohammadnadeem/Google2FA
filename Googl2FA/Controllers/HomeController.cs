@@ -60,6 +60,13 @@ namespace Googl2FA.Controllers
                     ViewBag.BarcodeImageUrl = result.QrCodeSetupImageUrl;
                     ViewBag.SetupCode = result.ManualEntryKey;
                     status = true;
+
+                    if (!result.TwoFAStatus)
+                    {
+                        HttpContext.Session.SetString("IsValidTwoFactorAuthentication", "true");
+                        HttpContext.Session.SetString("InvalidCodeErrorMessage", "");
+                        return RedirectToAction("Index");
+                    }
                 }
                 else
                 {

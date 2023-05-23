@@ -45,7 +45,8 @@ namespace UserApi.Controllers
                     Success = true,
                     ManualEntryKey = setupInfo.ManualEntryKey,
                     QrCodeSetupImageUrl = setupInfo.QrCodeSetupImageUrl,
-                    UserUniqueKey = UserUniqueKey
+                    UserUniqueKey = UserUniqueKey,
+                    TwoFAStatus = user.TwoFAStatus
                 });
             }
             else
