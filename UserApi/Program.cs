@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using UserApi.Config;
 using UserApi.Repository;
 
@@ -15,7 +16,12 @@ builder.Services.Configure<Google2FAConfig>(
     builder.Configuration.GetSection("Google2FAConfig"));
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddDbContext<UserDbContext> (o => o.UseSqlServer(builder.Configuration.GetConnectionString("UsersSqlServerDb")));
+// For sql server
+//builder.Services.AddDbContext<UserDbContext> (o => o.UseSqlServer(builder.Configuration.GetConnectionString("UsersSqlServerDb")));
+
+// For my sql
+var connectionString = builder.Configuration.GetConnectionString("UsersMySqlServerDb");
+builder.Services.AddDbContext<UserDbContext>(o => o.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 var app = builder.Build();
 
