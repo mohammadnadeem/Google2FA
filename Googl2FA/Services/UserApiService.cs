@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Googl2FA.Repository
 {
-    public class UserApiClient : IUserApiClient
+    public class UserApiService : IUserApiService
     {
         public async Task<AuthenticateUserResult> AuthenticateUserAsync(string username, string password, string code)
         {

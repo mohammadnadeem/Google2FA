@@ -2,6 +2,7 @@
 using Googl2FA.Models;
 using Googl2FA.Repository;
 using Google.Authenticator;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
@@ -13,9 +14,9 @@ namespace Googl2FA.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Google2FAConfig _google2FAConfig;
-        private readonly IUserApiClient _userApiClient;
+        private readonly IUserApiService _userApiClient;
 
-        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options, IUserApiClient userApiClient)
+        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options, IUserApiService userApiClient)
         {
             _logger = logger;
             _google2FAConfig = options.Value;
@@ -72,7 +73,7 @@ namespace Googl2FA.Controllers
                 }
                 else
                 {
-                    HttpContext.Session.SetString("InvalidCodeErrorMessage", "Invalid Credentials!!!!");
+                    HttpContext.Session.SetString("InvalidCodeErrorMessage", result.ErrorMessage);
                 }
             }
             else

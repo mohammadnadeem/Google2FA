@@ -18,7 +18,7 @@ builder.Services.AddOptions();
 builder.Services.Configure<Google2FAConfig>(
     builder.Configuration.GetSection("Google2FAConfig"));
 
-builder.Services.AddScoped<IUserApiClient, UserApiClient>();
+builder.Services.AddScoped<IUserApiService, UserApiService>();
 
 var app = builder.Build();
 

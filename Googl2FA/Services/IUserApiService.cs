@@ -2,7 +2,7 @@
 
 namespace Googl2FA.Repository
 {
-    public interface IUserApiClient
+    public interface IUserApiService
     {
         Task<AuthenticateUserResult> AuthenticateUserAsync(string username, string password, string code);
     }
