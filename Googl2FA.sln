@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Googl2FA", "Googl2FA\Googl2FA.csproj", "{795FB610-09B3-4C61-860F-C569C6A0499F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi", "Google2FA.Api\UserApi.csproj", "{11E5B8B5-660B-4468-9E2D-5B074C5722E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApi", "UserApi\UserApi.csproj", "{11E5B8B5-660B-4468-9E2D-5B074C5722E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

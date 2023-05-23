@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using UserApi.Models;
-
-namespace UserApi.Repository
+﻿namespace UserApi.Repository
 {
     public class UserRepository : IUserRepository
     {
