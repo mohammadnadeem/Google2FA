@@ -10,12 +10,12 @@ namespace Googl2FA.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IUserApiService _userApiClient;
+        private readonly IUserApiService _userApiService;
 
         public HomeController(ILogger<HomeController> logger, IUserApiService userApiClient)
         {
             _logger = logger;
-            _userApiClient = userApiClient;
+            _userApiService = userApiClient;
         }
 
         public IActionResult Index()
@@ -50,7 +50,7 @@ namespace Googl2FA.Controllers
             if (HttpContext.Session.GetString("Username") == null || HttpContext.Session.GetString("IsValidTwoFactorAuthentication") == null 
                 || !Convert.ToBoolean(HttpContext.Session.GetString("IsValidTwoFactorAuthentication")))
             {                
-                var result = _userApiClient.AuthenticateUserAsync(login.Username, login.Password, "").Result;
+                var result = _userApiService.AuthenticateUserAsync(login.Username, login.Password, "").Result;
 
                 if (result.Success)
                 {
@@ -88,7 +88,7 @@ namespace Googl2FA.Controllers
             string username = HttpContext.Session.GetString("Username");
             string password = HttpContext.Session.GetString("Password");
             
-            var result = _userApiClient.AuthenticateUserAsync(username, password, CodeDigit).Result;
+            var result = _userApiService.AuthenticateUserAsync(username, password, CodeDigit).Result;
 
             if (result.Success)
             {
