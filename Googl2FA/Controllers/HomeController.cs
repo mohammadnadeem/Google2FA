@@ -1,7 +1,7 @@
 ﻿using Googl2FA.Models;
 using Googl2FA.Repository;
-using Google.Authenticator;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Plugins;
 using System.Diagnostics;
 using System.Text;
 
@@ -55,6 +55,7 @@ namespace Googl2FA.Controllers
                 if (result.Success)
                 {
                     HttpContext.Session.SetString("Username", login.Username);
+                    HttpContext.Session.SetString("Password", login.Password);
                     HttpContext.Session.SetString("UserUniqueKey", result.UserUniqueKey);
                     ViewBag.BarcodeImageUrl = result.QrCodeSetupImageUrl;
                     ViewBag.SetupCode = result.ManualEntryKey;
@@ -77,18 +78,18 @@ namespace Googl2FA.Controllers
 
         public ActionResult TwoFactorAuthenticate(string CodeDigit)
         {
-            var token = CodeDigit;
-            TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
-            string UserUniqueKey = HttpContext.Session.GetString("UserUniqueKey");
-            UserUniqueKey = UserUniqueKey ?? "Adminsomerandomkey";
-            bool isValid = TwoFacAuth.ValidateTwoFactorPIN(UserUniqueKey, token, false);
-            if (isValid)
+            string username = HttpContext.Session.GetString("Username");
+            string password = HttpContext.Session.GetString("Password");
+            
+            var result = _userApiClient.AuthenticateUserAsync(username, password, CodeDigit).Result;
+
+            if (result.Success)
             {
                 HttpContext.Session.SetString("IsValidTwoFactorAuthentication", "true");
                 HttpContext.Session.SetString("InvalidCodeErrorMessage", "");
                 return RedirectToAction("Index");
             }
-            HttpContext.Session.SetString("InvalidCodeErrorMessage", "Google Two Factor PIN is expired or wrong");            
+            HttpContext.Session.SetString("InvalidCodeErrorMessage", result.ErrorMessage);            
             return RedirectToAction("Login");
         }
 

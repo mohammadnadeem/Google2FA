@@ -32,21 +32,39 @@ namespace UserApi.Controllers
             var user = _userRepository.GetUser(request.UserName, request.Password);
             
             if (user == null)
-                return Unauthorized(new AuthenticateUserResult { Success = false, ErrorMessage = "Invalid User!" });
+                return Unauthorized(new AuthenticateUserResult { Success = false, ErrorMessage = "Invalid Credentails!" });
                         
-            var UserUniqueKey = request.UserName + user.SecretKey; 
+            var UserUniqueKey = request.UserName + user.SecretKey;
 
-            //Two Factor Authentication Setup
-            TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
-            var setupInfo = TwoFacAuth.GenerateSetupCode(_google2FAConfig.Issuer, request.UserName, ConvertSecretToBytes(UserUniqueKey, false), 300);
-
-            return Ok(new AuthenticateUserResult
+            if (string.IsNullOrEmpty(request.Google2FACode))
             {
-                Success = true,
-                ManualEntryKey = setupInfo.ManualEntryKey,
-                QrCodeSetupImageUrl = setupInfo.QrCodeSetupImageUrl,
-                UserUniqueKey = UserUniqueKey
-            });
+                TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
+                var setupInfo = TwoFacAuth.GenerateSetupCode(_google2FAConfig.Issuer, request.UserName, ConvertSecretToBytes(UserUniqueKey, false), 300);
+                return Ok(new AuthenticateUserResult
+                {
+                    Success = true,
+                    ManualEntryKey = setupInfo.ManualEntryKey,
+                    QrCodeSetupImageUrl = setupInfo.QrCodeSetupImageUrl,
+                    UserUniqueKey = UserUniqueKey
+                });
+            }
+            else
+            {
+                TwoFactorAuthenticator TwoFacAuth = new TwoFactorAuthenticator();
+                bool isValid = TwoFacAuth.ValidateTwoFactorPIN(UserUniqueKey, request.Google2FACode, false);
+                if(isValid)
+                {
+                    return Ok(new AuthenticateUserResult
+                    {
+                        Success = true,
+                        UserUniqueKey = UserUniqueKey
+                    });
+                }
+                else
+                {
+                    return Unauthorized(new AuthenticateUserResult { Success = false, ErrorMessage = "Google Two Factor PIN is expired or wrong!" });
+                }
+            }                
         }
 
         private static byte[] ConvertSecretToBytes(string secret, bool secretIsBase32) =>
