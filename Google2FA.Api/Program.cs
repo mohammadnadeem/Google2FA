@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using System;
 using UserApi.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddDbContext<UserDbContext> (o => o.UseSqlServer(builder.Configuration.GetConnectionString("UsersSqlServerDb")));
 
 var app = builder.Build();
 

@@ -1,40 +1,23 @@
-﻿using UserApi.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using UserApi.Models;
 
 namespace UserApi.Repository
 {
     public class UserRepository : IUserRepository
     {
-        public UserRepository()
-        {
-            using (var context = new Google2FAContext())
-            {
-                var users = new List<User>()
-                {
-                    new User
-                    {
-                        Username = "Admin",
-                        Password = "12345"
-                    },
-                    new User
-                    {
-                        Username = "Shahzeb",
-                        Password = "12345"
-                    }
-                };
+        private readonly UserDbContext _userDbContext;
 
-                context.Users.AddRange(users);
-                context.SaveChanges();
-            }
+        public UserRepository(UserDbContext userDbContext)
+        {
+            _userDbContext = userDbContext;
+            _userDbContext.Database.EnsureCreated();
         }
 
         public bool IsValidUser(string username, string password)
         {
-            using (var context = new Google2FAContext())
-            {
-                var users = context.Users.ToList();
+            var users = _userDbContext.Users.ToList();
 
-                return users.Any(user => user.Username.Equals(username) && user.Password.Equals(password));
-            }
+            return users.Any(user => user.Username.Equals(username) && user.Password.Equals(password));            
         }
     }
 }
