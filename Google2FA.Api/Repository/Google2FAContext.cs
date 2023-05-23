@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol.Plugins;
+using UserApi.Models;
 
-namespace Googl2FA.Repository
+namespace UserApi.Repository
 {
     public class Google2FAContext : DbContext
     {
-        protected override void OnConfiguring (DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseInMemoryDatabase(databaseName: "UserDb");
         }

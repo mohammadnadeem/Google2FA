@@ -1,7 +1,5 @@
 using Googl2FA.Config;
 using Googl2FA.Repository;
-using NuGet.Configuration;
-using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +18,7 @@ builder.Services.AddOptions();
 builder.Services.Configure<Google2FAConfig>(
     builder.Configuration.GetSection("Google2FAConfig"));
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserApiClient, UserApiClient>();
 
 var app = builder.Build();
 

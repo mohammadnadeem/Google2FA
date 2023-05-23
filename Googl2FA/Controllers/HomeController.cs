@@ -13,13 +13,13 @@ namespace Googl2FA.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly Google2FAConfig _google2FAConfig;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserApiClient _userApiClient;
 
-        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options, IUserRepository userRepository)
+        public HomeController(ILogger<HomeController> logger, IOptions<Google2FAConfig> options, IUserApiClient userApiClient)
         {
             _logger = logger;
             _google2FAConfig = options.Value;
-            _userRepository = userRepository;
+            _userApiClient = userApiClient;
         }
 
         public IActionResult Index()
@@ -55,8 +55,10 @@ namespace Googl2FA.Controllers
                 || !Convert.ToBoolean(HttpContext.Session.GetString("IsValidTwoFactorAuthentication")))
             {                
                 string UserUniqueKey = login.Username + _google2FAConfig.AuthKey;
-                                
-                if (_userRepository.IsValidUser(login.Username, login.Password))
+
+                var result = _userApiClient.AuthenticateUserAsync(login.Username, login.Password, "").Result;
+
+                if (result.Success)
                 {
                     HttpContext.Session.SetString("Username", login.Username);
 

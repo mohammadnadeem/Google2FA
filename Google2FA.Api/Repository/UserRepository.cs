@@ -1,7 +1,6 @@
-﻿using NuGet.Protocol.Plugins;
-using System;
+﻿using UserApi.Models;
 
-namespace Googl2FA.Repository
+namespace UserApi.Repository
 {
     public class UserRepository : IUserRepository
     {

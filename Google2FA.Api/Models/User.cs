@@ -1,4 +1,4 @@
-﻿namespace Googl2FA.Repository
+﻿namespace UserApi.Models
 {
     public class User
     {
